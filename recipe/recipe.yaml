@@ -3,7 +3,10 @@
 context:
   version: "0.10.0"
   build_number: 1
-  torch_proc_type: ${{ "cuda" ~ cuda_compiler_version | version_to_buildstring if cuda_compiler_version != "None" else "cpu" }}
+  # Note: as of April 2026, the rocm version is not actually have AMD gpu-specific code, it is 
+  # just a CPU variant that can be installed with pytorch * rocm*, see https://github.com/ROCm/TheRock/issues/1490
+  # and https://github.com/meta-pytorch/torchcodec/issues/444
+  torch_proc_type: ${{ "rocm" ~ hip_compiler_version | version_to_buildstring if hip_compiler_version != "None" else ("cuda" ~ cuda_compiler_version | version_to_buildstring if cuda_compiler_version != "None" else "cpu") }}
   # ensure arm_variant_type gets detected as a used variable
   touch_arm_variant_type: ${{ arm_variant_type | default("None") }}
 
@@ -24,6 +27,8 @@ build:
   skip:
     # PyTorch does not support cuda 11
     - cuda_compiler_version == "11.8"
+    # ROCm builds are only supported on linux
+    - hip_compiler_version != "None" and not linux
   string: ${{ torch_proc_type }}_py${{ python | version_to_buildstring }}_h${{ hash }}_${{ build_number }}
 
 outputs:
@@ -58,6 +63,9 @@ outputs:
         - if: cuda_compiler_version != "None"
           then:
             - ${{ compiler('cuda') }}
+        - if: hip_compiler_version != "None"
+          then:
+            - ${{ compiler('hip') }}
         - if: cuda_compiler_version != "None" and linux and aarch64
           then:
             - arm-variant * ${{ arm_variant_type | default("None") }}
@@ -104,6 +112,9 @@ outputs:
             - nvtx-c
             # These are actual torchcodec deps
             - libnpp-dev
+        - if: hip_compiler_version != "None"
+          then:
+            - rocm-core ${{ hip_compiler_version }}.*
       run:
         - python
         - pytorch * [build=${{ torch_proc_type }}*]
@@ -167,7 +178,7 @@ about:
   license: BSD-3-Clause
   license_file:
     - LICENSE
-  summary: TorchCodec is a Python library for decoding videos into PyTorch tensors, on CPU and CUDA GPU.
+  summary: TorchCodec is a Python library for decoding videos into PyTorch tensors, on CPU and GPU backends (CUDA/ROCm).
 
 extra:
   recipe-maintainers:
