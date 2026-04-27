@@ -29,6 +29,8 @@ build:
     - cuda_compiler_version == "11.8"
     # ROCm builds are only supported on linux
     - hip_compiler_version != "None" and not linux
+    # Only build ROCm buils on rock-the-conda
+    - hip_compiler_version == "None"
   string: ${{ torch_proc_type }}_py${{ python | version_to_buildstring }}_h${{ hash }}_${{ build_number }}
 
 outputs:
