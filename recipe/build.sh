@@ -4,7 +4,7 @@ if [[ ${hip_compiler_version:-None} != "None" ]]; then
   # Note: as of April 2026, the rocm version is not actually have AMD gpu-specific code, it is 
   # just a CPU variant that can be installed with pytorch * rocm*, see https://github.com/ROCm/TheRock/issues/1490
   # and https://github.com/meta-pytorch/torchcodec/issues/444
-   export ENABLE_CUDA=1
+   export ENABLE_CUDA=0
    export USE_ROCM=1
    export USE_CUDA=0
    export ROCM_PATH="${BUILD_PREFIX}"
