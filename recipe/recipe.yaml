@@ -117,6 +117,8 @@ outputs:
         - if: hip_compiler_version != "None"
           then:
             - rocm-core ${{ hip_compiler_version }}.*
+            - hipblas-common
+            - rocprim
       run:
         - python
         - pytorch * [build=${{ torch_proc_type }}*]
