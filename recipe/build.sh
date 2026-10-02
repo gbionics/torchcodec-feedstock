@@ -11,8 +11,8 @@ if [[ ${hip_compiler_version:-None} != "None" ]]; then
    export ROCM_HOME="${BUILD_PREFIX}"
    export HIP_PATH="${BUILD_PREFIX}"
    export HIP_ROOT_DIR="${BUILD_PREFIX}"
-   if [[ -n "${ROCK_THE_CONDA_ROCM_GPU_TARGETS:-}" ]]; then
-      export PYTORCH_ROCM_ARCH="${ROCK_THE_CONDA_ROCM_GPU_TARGETS}"
+   if [[ -n "${CONDA_FORGE_DEFAULT_ROCM_GPU_TARGETS:-}" ]]; then
+      export PYTORCH_ROCM_ARCH="${CONDA_FORGE_DEFAULT_ROCM_GPU_TARGETS}"
    fi
 elif [[ ${cuda_compiler_version} != "None" ]]; then
    export ENABLE_CUDA=1
